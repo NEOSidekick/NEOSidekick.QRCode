@@ -31,7 +31,7 @@ class QRImagickWithLogo extends QRImagick
         $imLogo->resizeImage($size, $size, Imagick::FILTER_LANCZOS, 0.85, true);
 
         // add the logo to the qrcode
-        $this->imagick->compositeImage($imLogo, Imagick::COMPOSITE_ADD, $pos, $pos);
+        $this->imagick->compositeImage($imLogo, Imagick::COMPOSITE_OVER, $pos, $pos);
 
         // output (retain functionality of the parent class)
         $imageData = $this->imagick->getImageBlob();
