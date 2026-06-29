@@ -15,7 +15,7 @@ Neos:
         NEOSidekick.QRCode: true
   Fusion:
     defaultContext:
-      'NEOSidekick.QRCode': NEOSidekick\QRCode\QrCodeHelper
+      NEOSidekickQRCode: NEOSidekick\QRCode\QrCodeHelper
   Flow:
     mvc:
       routes:

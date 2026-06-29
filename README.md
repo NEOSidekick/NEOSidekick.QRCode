@@ -97,6 +97,9 @@ QR code version and error correction level; it is not a separate setting. With t
 
 If the payload is too long, the endpoint returns HTTP `400` with a plain-text error message.
 
+The same capacity helpers are available in Fusion/Eel as `NEOSidekickQRCode.getPayloadBytes(payload)` and
+`NEOSidekickQRCode.getMaximumPayloadBytes()`.
+
 ## Defaults and intentional non-features
 
 - No Neos shortcut override is installed by default.
