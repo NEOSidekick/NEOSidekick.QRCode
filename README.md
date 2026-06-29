@@ -9,8 +9,8 @@ NEOSidekick.QRCode generates PNG and SVG QR codes for URLs in Neos projects. It 
 [`chillerlan/php-qrcode`](https://github.com/chillerlan/php-qrcode), supports configurable color themes, and can
 optionally place project-specific logos in the center of generated QR codes.
 
-The package exposes a small Fusion helper that creates signed Neos URLs to the QR code endpoint. It does not override
-Neos shortcut rendering and it does not expose a ZIP/download-all endpoint by default.
+The package exposes small Fusion helpers that create signed Neos URLs to the QR code endpoint and to a ZIP archive
+endpoint for bulk downloads. It does not override Neos shortcut rendering.
 
 ## Installation
 
@@ -42,6 +42,23 @@ The generated URL points to the package endpoint:
 
 Supported formats are `png` and `svg`.
 
+Generate a ZIP archive URL containing multiple themes and formats:
+
+```fusion
+qrCodeArchiveUrl = NEOSidekick.QRCode:ArchiveUri {
+    uri = 'https://www.example.com/'
+    themesCommaSeparated = 'black,grey'
+    formatsCommaSeparated = 'png,svg'
+    filename = 'example-qrcodes'
+}
+```
+
+The generated URL points to the archive endpoint:
+
+```text
+/neosidekick/qrcode/archive?uri=https%3A%2F%2Fwww.example.com%2F&themesCommaSeparated=black%2Cgrey&formatsCommaSeparated=png%2Csvg&name=example-qrcodes
+```
+
 ## Configuration
 
 The package intentionally keeps configuration small. Out of the box it ships two themes and QR version 10 with high
@@ -53,6 +70,8 @@ NEOSidekick:
     version: 10
     eccLevel: 'H'
     moduleShape: 'round'
+    archive:
+      enabled: true
     themes:
       grey:
         color: 'rgb(237, 237, 237)'
@@ -95,6 +114,21 @@ plain. If only `logo.svg` is configured, SVG output contains a logo and PNG outp
 The default `moduleShape: 'round'` renders connected round modules. Projects that need the older square-module output
 can set `moduleShape: 'square'`.
 
+### Archive endpoint
+
+The ZIP archive endpoint is enabled by default. It can be disabled if a project should only expose single-code
+downloads:
+
+```yaml
+NEOSidekick:
+  QRCode:
+    archive:
+      enabled: false
+```
+
+When enabled, the endpoint accepts the same `uri` payload as the single QR endpoint, plus comma-separated `themes` and
+`formats` arguments. It creates one file per requested theme/format pair and returns an `application/zip` response.
+
 ### Capacity
 
 The package validates the byte length of the URI before rendering. The maximum payload is computed from the configured
@@ -109,7 +143,7 @@ The same capacity helpers are available in Fusion/Eel as `NEOSidekickQRCode.getP
 ## Defaults and intentional non-features
 
 - No Neos shortcut override is installed by default.
-- No ZIP/download-all endpoint is installed by default.
+- The ZIP/download-all endpoint is installed by default and can be disabled through configuration.
 - No logo is rendered unless it is configured on the selected theme.
 - The package targets `chillerlan/php-qrcode` v5 and does not include v4 compatibility code.
 

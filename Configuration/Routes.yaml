@@ -1,4 +1,14 @@
 -
+  name: 'QR Code Archive'
+  uriPattern: 'neosidekick/qrcode/archive'
+  defaults:
+    '@package': 'NEOSidekick.QRCode'
+    '@controller': 'QrCodeArchive'
+    '@action': 'downloadAll'
+  appendExceedingArguments: TRUE
+  httpMethods: ['GET']
+
+-
   name: 'QR Code Generator'
   uriPattern: 'neosidekick/qrcode'
   defaults:

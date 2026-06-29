@@ -12,3 +12,23 @@ prototype(NEOSidekick.QRCode:GeneratorUri) < prototype(Neos.Fusion:Component) {
         arguments.format = ${props.format}
     }
 }
+
+prototype(NEOSidekick.QRCode:ArchiveUri) < prototype(Neos.Fusion:Component) {
+    uri = null
+    formatsCommaSeparated = 'png,svg'
+    themesCommaSeparated = 'to-be-set'
+    filename = 'qr-code'
+
+    renderer = Neos.Fusion:UriBuilder {
+        package = 'NEOSidekick.QRCode'
+        controller = 'QrCodeArchive'
+        action = 'downloadAll'
+        arguments.themesCommaSeparated = ${props.themesCommaSeparated}
+        arguments.uri = ${props.uri}
+        arguments.name = ${props.filename}
+        arguments.formatsCommaSeparated = ${props.formatsCommaSeparated}
+    }
+}
+
+prototype(NEOSidekick.QRCode:GeneratorUriAll) < prototype(NEOSidekick.QRCode:ArchiveUri) {
+}

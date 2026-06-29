@@ -3,6 +3,8 @@ NEOSidekick:
     version: 10
     eccLevel: 'H'
     moduleShape: 'round'
+    archive:
+      enabled: true
     themes:
       grey:
         color: 'rgb(237, 237, 237)'

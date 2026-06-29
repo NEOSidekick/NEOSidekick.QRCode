@@ -2,10 +2,15 @@ privilegeTargets:
   'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
     'NEOSidekick.QRCode:QrCode':
       matcher: 'method(NEOSidekick\QRCode\Controller\QrCodeController->indexAction())'
+    'NEOSidekick.QRCode:QrCodeArchive':
+      matcher: 'method(NEOSidekick\QRCode\Controller\QrCodeArchiveController->downloadAllAction())'
 
 roles:
   'Neos.Flow:Everybody':
     privileges:
       -
         privilegeTarget: 'NEOSidekick.QRCode:QrCode'
+        permission: GRANT
+      -
+        privilegeTarget: 'NEOSidekick.QRCode:QrCodeArchive'
         permission: GRANT
