@@ -52,6 +52,7 @@ NEOSidekick:
   QRCode:
     version: 10
     eccLevel: 'H'
+    moduleShape: 'round'
     themes:
       grey:
         color: 'rgb(237, 237, 237)'
@@ -88,6 +89,11 @@ NEOSidekick:
 
 Configure PNG and SVG separately. If only `logo.png` is configured, PNG output contains a logo and SVG output stays
 plain. If only `logo.svg` is configured, SVG output contains a logo and PNG output stays plain.
+
+### Module shape
+
+The default `moduleShape: 'round'` renders connected round modules. Projects that need the older square-module output
+can set `moduleShape: 'square'`.
 
 ### Capacity
 

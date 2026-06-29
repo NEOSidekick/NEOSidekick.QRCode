@@ -2,6 +2,7 @@ NEOSidekick:
   QRCode:
     version: 10
     eccLevel: 'H'
+    moduleShape: 'round'
     themes:
       grey:
         color: 'rgb(237, 237, 237)'

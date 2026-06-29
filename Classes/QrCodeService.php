@@ -37,6 +37,7 @@ class QrCodeService
         $darkColor = $themeSettings['color'];
         $version = $this->getConfiguredVersion();
         $eccLevel = $this->getConfiguredEccLevel();
+        $useRoundModules = $this->getConfiguredModuleShape() === 'round';
 
         $this->capacityCalculator->assertPayloadFits($uri, $version, $eccLevel);
 
@@ -46,14 +47,14 @@ class QrCodeService
             'outputBase64' => $base64,
             'addQuietzone' => false,
             'drawLightModules' => false,
-            'drawCircularModules' => true,
+            'drawCircularModules' => $useRoundModules,
             'circleRadius' => 0.45,
-            'connectPaths' => true,
-            'keepAsSquare' => [
+            'connectPaths' => $useRoundModules,
+            'keepAsSquare' => $useRoundModules ? [
                 QRMatrix::M_FINDER_DARK,
                 QRMatrix::M_FINDER_DOT,
                 QRMatrix::M_ALIGNMENT_DARK,
-            ]
+            ] : []
         ];
 
         $options = match ($format) {
@@ -165,6 +166,16 @@ class QrCodeService
             'Q' => EccLevel::Q,
             'H' => EccLevel::H,
             default => throw new InvalidArgumentException('The configured QR code ECC level is invalid', 1689167094324),
+        };
+    }
+
+    protected function getConfiguredModuleShape(): string
+    {
+        $moduleShape = strtolower((string)($this->settings['moduleShape'] ?? 'round'));
+
+        return match ($moduleShape) {
+            'round', 'square' => $moduleShape,
+            default => throw new InvalidArgumentException('The configured QR code module shape is invalid', 1689167094325),
         };
     }
 }
