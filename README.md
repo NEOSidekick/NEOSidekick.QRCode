@@ -22,19 +22,6 @@ composer require neosidekick/qrcode
 
 We use semantic versioning, so every breaking change will increase the major version number.
 
-### Upgrade from CodeQ.QrCode
-
-This package replaces the previous project-local `codeq/qrcode` package and uses the package key
-`NEOSidekick.QRCode`.
-
-After replacing the Composer dependency, update project references from:
-
-- `CodeQ.QrCode` to `NEOSidekick.QRCode`
-- `CodeQ\QrCode` to `NEOSidekick\QRCode`
-- `CodeQ: QrCode:` settings to `NEOSidekick: QRCode:`
-
-Project-specific shortcut overrides, ZIP downloads, theme names, colors and logos should live in the site package.
-
 ## Usage
 
 Generate a QR code URL from Fusion:
@@ -118,9 +105,6 @@ If the payload is too long, the endpoint returns HTTP `400` with a plain-text er
 - The package targets `chillerlan/php-qrcode` v5 and does not include v4 compatibility code.
 
 ## Development
-
-When migrating existing project-local QR code implementations, create behavioral snapshots in the implementing project
-before replacing the local package. Customer-specific snapshots should not be committed to this public package.
 
 Run the test suite from a Neos distribution with the package installed in `DistributionPackages/NEOSidekick.QRCode`:
 
