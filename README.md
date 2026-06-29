@@ -59,6 +59,87 @@ The generated URL points to the archive endpoint:
 /neosidekick/qrcode/archive?uri=https%3A%2F%2Fwww.example.com%2F&themesCommaSeparated=black%2Cgrey&formatsCommaSeparated=png%2Csvg&name=example-qrcodes
 ```
 
+### Shortcut backend override example
+
+The package does not install a shortcut override by default. If a project wants QR code previews directly in the Neos
+backend shortcut view, add the override in the site package.
+
+Example Fusion:
+
+```fusion
+prototype(Neos.Neos:Shortcut) {
+    templatePath = 'resource://Vendor.Site/Private/Templates/FusionObjects/Shortcut.html'
+
+    qrCodeFilenamePrefix = ${String.toLowerCase(String.pregReplace(String.trim(q(documentNode).property('title')), '/[()\[\]\{\}&!. ]+/', '_'))}
+    qrCodeFilenamePrefix.@process.trimUnderscoreAtStart = ${String.startsWith(value, '_') ? String.substr(value, 1 - String.length(value)) : value}
+    qrCodeFilenamePrefix.@process.trimUnderscoreAtEnd = ${String.endsWith(value, '_') ? String.substr(value, 0, String.length(value) - 1) : value}
+
+    @context.nodeUriInLive = Neos.Neos:NodeUri {
+        node = ${q(documentNode).parent().context({workspaceName: 'live'}).get(0)}
+        absolute = true
+        @process.addUriPathSegment = ${value + q(documentNode).property('uriPathSegment')}
+    }
+
+    nodeUriInLiveTooLarge = ${NEOSidekickQRCode.getPayloadBytes(nodeUriInLive) > NEOSidekickQRCode.getMaximumPayloadBytes()}
+
+    qrCodeThemes = ${['black', 'grey']}
+    @context.qrCodeThemes = ${this.qrCodeThemes}
+
+    qrCodeLinks = Neos.Fusion:DataStructure {
+        png = Neos.Fusion:Map {
+            items = ${qrCodeThemes}
+            itemName = 'theme'
+            keyRenderer = ${theme}
+            itemRenderer = NEOSidekick.QRCode:GeneratorUri {
+                theme = ${theme}
+                uri = ${nodeUriInLive}
+                format = 'png'
+            }
+        }
+        svg = Neos.Fusion:Map {
+            items = ${qrCodeThemes}
+            itemName = 'theme'
+            keyRenderer = ${theme}
+            itemRenderer = NEOSidekick.QRCode:GeneratorUri {
+                theme = ${theme}
+                uri = ${nodeUriInLive}
+                format = 'svg'
+            }
+        }
+        all = NEOSidekick.QRCode:ArchiveUri {
+            themesCommaSeparated = 'black,grey'
+            formatsCommaSeparated = 'png,svg'
+            uri = ${nodeUriInLive}
+            filename = ${q(node).property('uriPathSegment')}
+        }
+    }
+}
+```
+
+Example Fluid template excerpt:
+
+```html
+<f:if condition="{nodeUriInLiveTooLarge}">
+    <f:then>
+        <p>The URL is too long and no QR code can be generated.</p>
+    </f:then>
+    <f:else>
+        <div>
+            <f:for each="{qrCodeThemes}" as="theme">
+                <div>
+                    <a href="{qrCodeLinks.svg.{theme}}" target="_blank">
+                        <img src="{qrCodeLinks.svg.{theme}}" alt="" />
+                    </a>
+                    <a download="{qrCodeFilenamePrefix}_{theme}.svg" href="{qrCodeLinks.svg.{theme}}">SVG</a>
+                    <a download="{qrCodeFilenamePrefix}_{theme}.png" href="{qrCodeLinks.png.{theme}}">PNG</a>
+                </div>
+            </f:for>
+        </div>
+        <a href="{qrCodeLinks.all}" target="_blank" download>Download all QR codes as ZIP</a>
+    </f:else>
+</f:if>
+```
+
 ## Configuration
 
 The package intentionally keeps configuration small. Out of the box it ships two themes and QR version 10 with high
