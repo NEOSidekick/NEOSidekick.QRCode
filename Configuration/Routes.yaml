@@ -1,0 +1,8 @@
+-
+  name: 'QR Code Generator'
+  uriPattern: 'neosidekick/qrcode'
+  defaults:
+    '@package': 'NEOSidekick.QRCode'
+    '@controller': 'QrCode'
+    '@action': 'index'
+  appendExceedingArguments: TRUE

@@ -1,0 +1,23 @@
+NEOSidekick:
+  QRCode:
+    version: 10
+    eccLevel: 'H'
+    themes:
+      grey:
+        color: 'rgb(237, 237, 237)'
+      black:
+        color: '#000'
+
+Neos:
+  Neos:
+    fusion:
+      autoInclude:
+        NEOSidekick.QRCode: true
+  Fusion:
+    defaultContext:
+      'NEOSidekick.QRCode': NEOSidekick\QRCode\QrCodeHelper
+  Flow:
+    mvc:
+      routes:
+        'NEOSidekick.QRCode':
+          position: 'before Neos.Neos'

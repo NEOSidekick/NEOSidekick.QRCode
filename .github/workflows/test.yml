@@ -1,0 +1,87 @@
+name: build
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+    branches:
+      - 'main'
+
+jobs:
+  test:
+    name: "Test (PHP ${{ matrix.php-versions }}, Neos ${{ matrix.neos-versions }})"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php-versions: ['8.2', '8.3']
+        neos-versions: ['8.3', '8.4']
+        dependencies: ['locked']
+
+    runs-on: ubuntu-latest
+
+    env:
+      FLOW_CONTEXT: Testing
+      NEOS_FOLDER: neos/
+      DIST_FOLDER: DistributionPackages/NEOSidekick.QRCode
+
+    steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, xml, json, zlib, iconv, intl, imagick, pdo_sqlite
+          ini-values: date.timezone="Europe/Vienna"
+
+      - name: Install Neos Project and test dependencies
+        run: |
+          composer create --no-scripts --no-install neos/neos-base-distribution "${{ env.NEOS_FOLDER }}" "~${{ matrix.neos-versions }}.0"
+          cd "${{ env.NEOS_FOLDER }}"
+          composer require phpstan/phpstan "^1.10.0" --no-install --dev
+          composer require squizlabs/php_codesniffer "^3.7" --no-install --dev
+          composer require phpunit/phpunit "^9.6" --no-install --dev
+          composer config --no-plugins allow-plugins.neos/composer-plugin true
+
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          path: ${{ env.NEOS_FOLDER }}${{ env.DIST_FOLDER }}
+
+      - name: Finish composer setup
+        run: |
+          cd "${{ env.NEOS_FOLDER }}"
+          composer config repositories.qrcode '{ "type": "path", "url": "./${{ env.DIST_FOLDER }}", "options": { "symlink": false } }'
+          composer require neosidekick/qrcode "@dev" --no-install
+
+      - name: Cache Composer packages
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cache/composer
+            ~/${{ env.NEOS_FOLDER }}Packages
+          key: php-${{ matrix.php-versions }}-neos-${{ matrix.neos-versions }}-${{ matrix.dependencies }}-${{ hashFiles('**/composer.json') }}
+          restore-keys: php-${{ matrix.php-versions }}-neos-${{ matrix.neos-versions }}-${{ matrix.dependencies }}
+
+      - name: Install dependencies
+        run: |
+          cd "${{ env.NEOS_FOLDER }}"
+          composer install --no-progress --no-interaction
+
+      - name: Set Flow Context
+        run: echo "FLOW_CONTEXT=${{ env.FLOW_CONTEXT }}" >> $GITHUB_ENV
+
+      - name: Run style tests
+        run: |
+          cd "${{ env.NEOS_FOLDER }}"
+          bin/phpcs --colors -n --standard=PSR12 ${{ env.DIST_FOLDER }}/Classes ${{ env.DIST_FOLDER }}/Tests
+
+      - name: Run stan tests
+        run: |
+          cd "${{ env.NEOS_FOLDER }}"
+          bin/phpstan analyse ${{ env.DIST_FOLDER }}/Classes ${{ env.DIST_FOLDER }}/Tests/Unit
+
+      - name: Run unit tests
+        run: |
+          cd "${{ env.NEOS_FOLDER }}"
+          bin/phpunit --colors --stop-on-failure -c ${{ env.DIST_FOLDER }}/Tests/UnitTests.xml --testsuite "NEOSidekick.QRCode"

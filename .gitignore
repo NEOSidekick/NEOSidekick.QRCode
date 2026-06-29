@@ -1,0 +1,9 @@
+/Packages/
+/bin/
+/Data/
+/Configuration/Development/
+/Configuration/Testing/
+/composer.lock
+/.phpunit.result.cache
+/Tests/.phpunit.result.cache
+/Tests/Reports/

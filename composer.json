@@ -1,0 +1,70 @@
+{
+    "name": "neosidekick/qrcode",
+    "description": "Generate themed QR codes for Neos CMS projects",
+    "type": "neos-package",
+    "license": "GPL-3.0-or-later",
+    "keywords": [
+        "neos",
+        "neos-cms",
+        "qrcode",
+        "qr-code",
+        "neosidekick"
+    ],
+    "require": {
+        "php": "^8.2",
+        "neos/neos": "^8.3 || ^9.0",
+        "chillerlan/php-qrcode": "^5.0",
+        "setasign/fpdf": "^1.8.6"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^1.10.0",
+        "phpunit/phpunit": "^9.6",
+        "squizlabs/php_codesniffer": "^3.7"
+    },
+    "replace": {
+        "codeq/qrcode": "self.version"
+    },
+    "autoload": {
+        "psr-4": {
+            "NEOSidekick\\QRCode\\": "Classes/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "NEOSidekick\\QRCode\\Tests\\": "Tests/"
+        }
+    },
+    "extra": {
+        "neos": {
+            "package-key": "NEOSidekick.QRCode"
+        },
+        "applied-flow-migrations": []
+    },
+    "archive": {
+        "exclude": [
+            ".editorconfig",
+            ".gitattributes",
+            ".github",
+            ".gitignore",
+            "Tests"
+        ]
+    },
+    "config": {
+        "bin-dir": "bin",
+        "vendor-dir": "Packages/Libraries",
+        "allow-plugins": {
+            "neos/composer-plugin": true
+        }
+    },
+    "scripts": {
+        "fix:style": "phpcbf --colors --standard=PSR12 Classes Tests",
+        "test:style": "phpcs --colors -n --standard=PSR12 Classes Tests",
+        "test:stan": "phpstan analyse Classes Tests/Unit",
+        "test:unit": "bin/phpunit --configuration Tests/UnitTests.xml",
+        "test": [
+            "@test:style",
+            "@test:stan",
+            "@test:unit"
+        ]
+    }
+}

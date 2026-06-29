@@ -1,0 +1,14 @@
+prototype(NEOSidekick.QRCode:GeneratorUri) < prototype(Neos.Fusion:Component) {
+    uri = null
+    format = 'png'
+    theme = 'to-be-set'
+
+    renderer = Neos.Fusion:UriBuilder {
+        package = 'NEOSidekick.QRCode'
+        controller = 'QrCode'
+        action = 'index'
+        arguments.theme = ${props.theme}
+        arguments.uri = ${props.uri}
+        arguments.format = ${props.format}
+    }
+}
