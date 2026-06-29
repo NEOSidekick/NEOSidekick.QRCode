@@ -23,9 +23,9 @@ class QrCodeController extends ActionController
     /**
      * @param  string  $uri
      * @param  string  $theme
-     * @return void
+     * @return string
      */
-    public function indexAction(string $uri, string $theme = 'black', string $format = 'png'): void
+    public function indexAction(string $uri, string $theme = 'black', string $format = 'png'): string
     {
         $contentType = match ($format) {
             'png' => 'image/png',
@@ -34,24 +34,23 @@ class QrCodeController extends ActionController
         };
 
         if ($contentType === null) {
-            $this->respondWithError(400, 'The requested QR code format is not supported');
-            return;
+            return $this->respondWithError(400, 'The requested QR code format is not supported');
         }
 
         try {
             $this->response->setContentType($contentType);
-            $this->response->setContent($this->qrCodeService->generateForUri($uri, $theme, $format));
+            return $this->qrCodeService->generateForUri($uri, $theme, $format);
         } catch (InvalidArgumentException $exception) {
-            $this->respondWithError(400, $exception->getMessage());
-        } catch (Throwable $exception) {
-            $this->respondWithError(500, 'The QR code could not be generated');
+            return $this->respondWithError(400, $exception->getMessage());
+        } catch (Throwable) {
+            return $this->respondWithError(500, 'The QR code could not be generated');
         }
     }
 
-    protected function respondWithError(int $statusCode, string $message): void
+    protected function respondWithError(int $statusCode, string $message): string
     {
         $this->response->setStatusCode($statusCode);
         $this->response->setContentType('text/plain');
-        $this->response->setContent($message);
+        return $message;
     }
 }
