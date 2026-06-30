@@ -152,7 +152,7 @@ NEOSidekick:
     eccLevel: 'H'
     moduleShape: 'round'
     archive:
-      enabled: true
+      enabled: false
     themes:
       grey:
         color: 'rgb(237, 237, 237)'
@@ -197,14 +197,13 @@ can set `moduleShape: 'square'`.
 
 ### Archive endpoint
 
-The ZIP archive endpoint is enabled by default. It can be disabled if a project should only expose single-code
-downloads:
+The ZIP archive endpoint is disabled by default. Enable it only in projects that intentionally expose bulk downloads:
 
 ```yaml
 NEOSidekick:
   QRCode:
     archive:
-      enabled: false
+      enabled: true
 ```
 
 When enabled, the endpoint accepts the same `uri` payload as the single QR endpoint, plus comma-separated `themes` and

@@ -4,7 +4,7 @@ NEOSidekick:
     eccLevel: 'H'
     moduleShape: 'round'
     archive:
-      enabled: true
+      enabled: false
     themes:
       grey:
         color: 'rgb(237, 237, 237)'
