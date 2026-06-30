@@ -11,7 +11,8 @@ optionally place project-specific logos in the center of generated QR codes.
 
 The package exposes small Fusion helpers that create signed Neos URLs to the QR code endpoint and to a ZIP archive
 endpoint for bulk downloads. These package endpoints are intended for authenticated Neos backend usage and are granted
-to `Neos.Neos:AbstractEditor` by default. It does not override Neos shortcut rendering.
+to `Neos.Neos:AbstractEditor` by default. The package registers its controllers with the Neos backend authentication
+provider so existing editor sessions are evaluated for these routes. It does not override Neos shortcut rendering.
 
 ## Installation
 

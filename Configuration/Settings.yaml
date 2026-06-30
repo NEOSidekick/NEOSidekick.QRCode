@@ -20,6 +20,15 @@ Neos:
     defaultContext:
       NEOSidekickQRCode: NEOSidekick\QRCode\QrCodeHelper
   Flow:
+    security:
+      authentication:
+        providers:
+          'Neos.Neos:Backend':
+            requestPatterns:
+              'NEOSidekick.QRCode:Controllers':
+                pattern: 'ControllerObjectName'
+                patternOptions:
+                  controllerObjectNamePattern: 'NEOSidekick\QRCode\Controller\.*'
     mvc:
       routes:
         'NEOSidekick.QRCode':
