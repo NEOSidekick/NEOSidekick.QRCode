@@ -10,7 +10,8 @@ NEOSidekick.QRCode generates PNG and SVG QR codes for URLs in Neos projects. It 
 optionally place project-specific logos in the center of generated QR codes.
 
 The package exposes small Fusion helpers that create signed Neos URLs to the QR code endpoint and to a ZIP archive
-endpoint for bulk downloads. It does not override Neos shortcut rendering.
+endpoint for bulk downloads. These package endpoints are intended for authenticated Neos backend usage and are granted
+to `Neos.Neos:AbstractEditor` by default. It does not override Neos shortcut rendering.
 
 ## Installation
 
@@ -41,6 +42,9 @@ The generated URL points to the package endpoint:
 ```
 
 Supported formats are `png` and `svg`.
+
+By default, the endpoint requires an authenticated Neos editor session. Projects that need public QR generation should
+add a project-specific public endpoint or controller action with suitable access control, throttling or input limits.
 
 Generate a ZIP archive URL containing multiple themes and formats:
 
@@ -197,7 +201,8 @@ can set `moduleShape: 'square'`.
 
 ### Archive endpoint
 
-The ZIP archive endpoint is disabled by default. Enable it only in projects that intentionally expose bulk downloads:
+The ZIP archive endpoint is disabled by default. Enable it only in projects that intentionally use bulk downloads in
+authenticated backend views:
 
 ```yaml
 NEOSidekick:
@@ -207,7 +212,8 @@ NEOSidekick:
 ```
 
 When enabled, the endpoint accepts the same `uri` payload as the single QR endpoint, plus comma-separated `themes` and
-`formats` arguments. It creates one file per requested theme/format pair and returns an `application/zip` response.
+`formats` arguments. It rejects duplicate entries, unknown themes and unsupported formats before rendering. It creates
+one file per requested theme/format pair and returns an `application/zip` response.
 
 ### Capacity
 
@@ -223,7 +229,7 @@ The same capacity helpers are available in Fusion/Eel as `NEOSidekickQRCode.getP
 ## Defaults and intentional non-features
 
 - No Neos shortcut override is installed by default.
-- The ZIP/download-all endpoint is installed by default and can be disabled through configuration.
+- The ZIP/download-all endpoint is disabled by default.
 - No logo is rendered unless it is configured on the selected theme.
 - The package targets `chillerlan/php-qrcode` v5 and does not include v4 compatibility code.
 

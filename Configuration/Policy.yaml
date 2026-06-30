@@ -6,7 +6,7 @@ privilegeTargets:
       matcher: 'method(NEOSidekick\QRCode\Controller\QrCodeArchiveController->downloadAllAction())'
 
 roles:
-  'Neos.Flow:Everybody':
+  'Neos.Neos:AbstractEditor':
     privileges:
       -
         privilegeTarget: 'NEOSidekick.QRCode:QrCode'

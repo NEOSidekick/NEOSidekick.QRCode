@@ -7,6 +7,7 @@ namespace NEOSidekick\QRCode\Controller;
  */
 
 use InvalidArgumentException;
+use NEOSidekick\QRCode\QrCodeArchiveRequestValidator;
 use NEOSidekick\QRCode\QrCodeService;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
@@ -22,6 +23,12 @@ class QrCodeArchiveController extends ActionController
      * @var QrCodeService
      */
     protected $qrCodeService;
+
+    /**
+     * @Flow\Inject
+     * @var QrCodeArchiveRequestValidator
+     */
+    protected $requestValidator;
 
     /**
      * @Flow\Inject
@@ -41,7 +48,7 @@ class QrCodeArchiveController extends ActionController
         string $formatsCommaSeparated,
         string $name = 'qrcodes'
     ): string {
-        if (($this->settings['archive']['enabled'] ?? true) !== true) {
+        if (($this->settings['archive']['enabled'] ?? false) !== true) {
             return $this->respondWithPlainText('The QR code archive endpoint is disabled.', 404);
         }
 
@@ -52,14 +59,10 @@ class QrCodeArchiveController extends ActionController
         $themes = $this->splitCommaSeparatedValue($themesCommaSeparated);
         $formats = $this->splitCommaSeparatedValue($formatsCommaSeparated);
 
-        if ($themes === [] || $formats === []) {
-            return $this->respondWithPlainText('At least one QR code theme and format must be requested.', 400);
-        }
-
-        foreach ($formats as $format) {
-            if (!in_array($format, ['png', 'svg'], true)) {
-                return $this->respondWithPlainText('Only png and svg formats are supported.', 400);
-            }
+        try {
+            $this->requestValidator->validate($this->settings, $themes, $formats);
+        } catch (InvalidArgumentException $exception) {
+            return $this->respondWithPlainText($exception->getMessage(), 400);
         }
 
         $zip = new ZipArchive();
